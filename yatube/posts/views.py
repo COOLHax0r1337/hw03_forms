@@ -8,22 +8,18 @@ from posts . paginators import paginate_page
 
 def index(request):
     posts = Post.objects.select_related("group", "author")
-    page_obj = paginate_page(request, posts)
     paagination_data = paginate_page(request, posts)
     return render(
-        request, "posts/index.html", {**paagination_data},
-        {'page_obj': page_obj})
+        request, "posts/index.html", {**paagination_data})
 
 
 def group_posts(request, slug):
     group = get_object_or_404(Group, slug=slug)
     posts = group.posts.all().select_related('author')
-    page_obj = paginate_page(request, posts)
     paagination_data = paginate_page(request, posts)
     context = {
         'group': group,
         'posts': posts,
-        'page_obj': page_obj,
         **paagination_data
     }
     return render(request, 'posts/group_list.html', context)
@@ -32,11 +28,9 @@ def group_posts(request, slug):
 def profile(request, username):
     author = get_object_or_404(User, username=username)
     post_list = author.posts.all()
-    page_obj = paginate_page(request, post_list)
     paagination_data = paginate_page(request, post_list)
     context = {
         'author': author,
-        'page_obj': page_obj,
         **paagination_data
     }
     return render(request, 'posts/profile.html', context)
